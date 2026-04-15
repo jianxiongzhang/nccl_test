@@ -3,7 +3,6 @@
 
 **主机：** `ssh R6KD-CX8aaS-GPU-11 "/root/xuyj/run_zjx.sh"`（各次在远端 `export` 后执行）
 
-**说明：** 你原文第三次写为「AR ON **DDF** ON」，本报告按 **AR ON DDP ON** 命名（与 `OOO_RQ` / `RECEIVER_SIDE_MATCHING` / `PREPOST_RECEIVE_WORK_REQUESTS` 均为 1 的配置一致）。
 
 **delta：** 相对 **AR OFF** 的差异百分比：`((测量值 − AR OFF) / AR OFF) × 100%`（正为提升，负为下降）。
 
