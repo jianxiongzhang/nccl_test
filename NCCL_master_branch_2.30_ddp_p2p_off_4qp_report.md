@@ -1,0 +1,444 @@
+# NCCL master branch 2.30 — DDP P2P off (4 QP) — `all_reduce_perf` / `alltoall_perf` report
+
+## 1. Test commands
+
+Commands were launched from `R6KD-CX8aaS-GPU-11` and execute the bundled scripts on that host (which in turn drive the 16-GPU job across both nodes).
+
+| Case | Command |
+| --- | --- |
+| AR OFF | `ssh R6KD-CX8aaS-GPU-11 "/root/jianxiong/script/run_ar_off.sh"` |
+| AR ON, DDP OFF | `ssh R6KD-CX8aaS-GPU-11 "/root/jianxiong/script/run_ar_on.sh"` |
+| AR ON, DDP ON | `ssh R6KD-CX8aaS-GPU-11 "/root/jianxiong/script/run_ar_on_ddp_on.sh"` |
+
+Each script runs `nccl-tests` collectives `all_reduce_perf` and `alltoall_perf` with the parameters shown in the raw logs (for example `minBytes 1024`, `maxBytes 8589934592`, step factor 2, `warmup iters: 1`, `iters: 20`, validation enabled).
+
+## 2. Test environment and topology
+
+- **Hardware**: two **NVIDIA RTX 6000D** servers (6KD-class hosts in the naming pattern), **8 GPUs per node**, **16 ranks total** (`nGpus 1`, one process per GPU).
+- **Hosts**: `R6KD-CX8aaS-GPU-11` (ranks 0–7) and `R6KD-CX8aaS-GPU-12` (ranks 8–15). PCIe bus IDs per GPU are listed in the raw logs.
+- **NCCL**: runtime reports **`NCCL version 2.30.3+cuda13.0`**. The `nccl-tests` banner shows headers/library build **`23003`** (see raw logs).
+- **Collectives under test**: `all_reduce_perf` (float sum) and `alltoall_perf` (float, `redop none`). The comparison tables below use the **out-of-place** `algbw` column only.
+- **Run label**: this file is named **`…_4qp_report.md`** to reflect the **4 QP** configuration used for this sweep (distinct from the non-4QP report variant, if applicable).
+
+## 3. Comparison tables (out-of-place `algbw`, GB/s)
+
+Baseline is **AR OFF**. **Δ%** is `((algbw_case − algbw_AR_OFF) / algbw_AR_OFF) × 100`. Positive Δ% means higher algorithm bandwidth than AR OFF; negative means lower.
+
+In the tables below, the numeric **Δ vs AR OFF** cells are **percentage points** relative to AR OFF (for example, `44.00` means **+44.00%**, and `−4.55` means **−4.55%**).
+
+### 3.1 `all_reduce_perf` (out-of-place `algbw`)
+
+| size (B) | AR OFF | AR ON DDP OFF | Δ vs AR OFF (%) | AR ON DDP ON | Δ vs AR OFF (%) |
+| ---:| ---:| ---:| ---:| ---:| ---:|
+| 1024 | 0.02 | 0.02 | 0.00 | 0.02 | 0.00 |
+| 2048 | 0.04 | 0.04 | 0.00 | 0.04 | 0.00 |
+| 4096 | 0.06 | 0.06 | 0.00 | 0.06 | 0.00 |
+| 8192 | 0.11 | 0.11 | 0.00 | 0.12 | 9.09 |
+| 16384 | 0.22 | 0.21 | −4.55 | 0.20 | −9.09 |
+| 32768 | 0.25 | 0.36 | 44.00 | 0.38 | 52.00 |
+| 65536 | 0.61 | 0.59 | −3.28 | 0.61 | 0.00 |
+| 131072 | 1.32 | 1.11 | −15.91 | 1.31 | −0.76 |
+| 262144 | 1.88 | 1.76 | −6.38 | 2.16 | 14.89 |
+| 524288 | 3.54 | 2.58 | −27.12 | 3.65 | 3.11 |
+| 1048576 | 4.50 | 3.48 | −22.67 | 4.50 | 0.00 |
+| 2097152 | 5.42 | 4.47 | −17.53 | 5.46 | 0.74 |
+| 4194304 | 5.93 | 5.20 | −12.31 | 6.12 | 3.20 |
+| 8388608 | 17.34 | 15.86 | −8.54 | 17.29 | −0.29 |
+| 16777216 | 20.02 | 19.77 | −1.25 | 20.58 | 2.80 |
+| 33554432 | 19.61 | 19.77 | 0.82 | 19.56 | −0.25 |
+| 67108864 | 19.48 | 19.93 | 2.31 | 17.93 | −7.96 |
+| 134217728 | 22.84 | 22.76 | −0.35 | 22.37 | −2.06 |
+| 268435456 | 21.69 | 21.94 | 1.15 | 21.13 | −2.58 |
+| 536870912 | 20.02 | 20.00 | −0.10 | 20.05 | 0.15 |
+| 1073741824 | 19.70 | 20.08 | 1.93 | 19.60 | −0.51 |
+| 2147483648 | 19.94 | 20.18 | 1.20 | 19.73 | −1.05 |
+| 4294967296 | 19.85 | 20.17 | 1.61 | 19.70 | −0.76 |
+| 8589934592 | 19.86 | 20.19 | 1.66 | 19.68 | −0.91 |
+
+**Avg bus bandwidth (`nccl-tests` summary):** AR OFF **19.0991** GB/s; AR ON DDP OFF **18.8166** GB/s; AR ON DDP ON **18.9186** GB/s.
+
+### 3.2 `alltoall_perf` (out-of-place `algbw`)
+
+| size (B) | AR OFF | AR ON DDP OFF | Δ vs AR OFF (%) | AR ON DDP ON | Δ vs AR OFF (%) |
+| ---:| ---:| ---:| ---:| ---:| ---:|
+| 1024 | 0.02 | 0.02 | 0.00 | 0.02 | 0.00 |
+| 2048 | 0.04 | 0.04 | 0.00 | 0.04 | 0.00 |
+| 4096 | 0.08 | 0.08 | 0.00 | 0.08 | 0.00 |
+| 8192 | 0.17 | 0.17 | 0.00 | 0.17 | 0.00 |
+| 16384 | 0.34 | 0.33 | −2.94 | 0.33 | −2.94 |
+| 32768 | 0.67 | 0.65 | −2.99 | 0.66 | −1.49 |
+| 65536 | 1.33 | 1.31 | −1.50 | 1.29 | −3.01 |
+| 131072 | 2.56 | 2.51 | −1.95 | 2.50 | −2.34 |
+| 262144 | 4.14 | 3.01 | −27.29 | 4.90 | 18.36 |
+| 524288 | 8.05 | 6.76 | −16.02 | 8.03 | −0.25 |
+| 1048576 | 10.46 | 9.53 | −8.89 | 11.37 | 8.70 |
+| 2097152 | 19.60 | 15.79 | −19.44 | 20.28 | 3.47 |
+| 4194304 | 23.30 | 21.64 | −7.12 | 24.56 | 5.41 |
+| 8388608 | 31.20 | 28.93 | −7.28 | 32.19 | 3.17 |
+| 16777216 | 37.57 | 34.57 | −7.99 | 38.11 | 1.44 |
+| 33554432 | 44.03 | 42.18 | −4.20 | 44.60 | 1.29 |
+| 67108864 | 46.39 | 45.97 | −0.91 | 47.29 | 1.94 |
+| 134217728 | 48.00 | 47.77 | −0.48 | 48.01 | 0.02 |
+| 268435456 | 48.20 | 48.71 | 1.06 | 48.23 | 0.06 |
+| 536870912 | 48.21 | 49.38 | 2.43 | 48.07 | −0.29 |
+| 1073741824 | 48.72 | 49.32 | 1.23 | 48.14 | −1.19 |
+| 2147483648 | 48.91 | 49.51 | 1.23 | 48.26 | −1.33 |
+| 4294967296 | 48.58 | 49.59 | 2.08 | 48.15 | −0.89 |
+| 8589934592 | 48.65 | 49.58 | 1.91 | 48.28 | −0.76 |
+
+**Avg bus bandwidth (`nccl-tests` summary):** AR OFF **22.2992** GB/s; AR ON DDP OFF **21.7893** GB/s; AR ON DDP ON **22.3592** GB/s.
+
+## 4. Raw logs (appendix)
+
+Full console output for reproducibility (includes device listing, per-size `time` / `busbw`, and in-place columns).
+
+### Case 1 — AR OFF
+
+```log
+root@R6KD-CX8aaS-GPU-11:~/jianxiong/script# ssh R6KD-CX8aaS-GPU-11 "/root/jianxiong/script/run_ar_off.sh"
+# nccl-tests version 2.18.3 nccl-headers=23003 nccl-library=23003
+# Collective test starting: all_reduce_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid 2491300 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid 2491301 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid 2491302 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid 2491303 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid 2491304 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid 2491305 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid 2491306 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid 2491307 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid 1656573 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid 1656574 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid 1656575 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid 1656576 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid 1656577 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid 1656578 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid 1656579 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid 1656580 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.30.3+cuda13.0
+#
+#                                                              out-of-place                       in-place
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)
+        1024           256     float     sum      -1    61.81    0.02    0.03       0    56.02    0.02    0.03       0
+        2048           512     float     sum      -1    58.40    0.04    0.07       0    57.91    0.04    0.07       0
+        4096          1024     float     sum      -1    64.57    0.06    0.12       0    64.77    0.06    0.12       0
+        8192          2048     float     sum      -1    71.24    0.11    0.22       0    68.52    0.12    0.22       0
+       16384          4096     float     sum      -1    75.01    0.22    0.41       0    73.14    0.22    0.42       0
+       32768          8192     float     sum      -1   131.52    0.25    0.47       0   129.35    0.25    0.47       0
+       65536         16384     float     sum      -1   107.77    0.61    1.14       0   105.60    0.62    1.16       0
+      131072         32768     float     sum      -1    99.61    1.32    2.47       0    99.23    1.32    2.48       0
+      262144         65536     float     sum      -1   139.52    1.88    3.52       0   145.63    1.80    3.38       0
+      524288        131072     float     sum      -1   148.06    3.54    6.64       0   145.03    3.62    6.78       0
+     1048576        262144     float     sum      -1   232.78    4.50    8.45       0   230.92    4.54    8.51       0
+     2097152        524288     float     sum      -1   386.83    5.42   10.17       0   384.55    5.45   10.23       0
+     4194304       1048576     float     sum      -1   706.75    5.93   11.13       0   692.27    6.06   11.36       0
+     8388608       2097152     float     sum      -1   483.65   17.34   32.52       0   482.38   17.39   32.61       0
+    16777216       4194304     float     sum      -1   838.18   20.02   37.53       0   842.16   19.92   37.35       0
+    33554432       8388608     float     sum      -1  1711.52   19.61   36.76       0  1712.31   19.60   36.74       0
+    67108864      16777216     float     sum      -1  3444.15   19.48   36.53       0  3331.33   20.14   37.77       0
+   134217728      33554432     float     sum      -1  5877.21   22.84   42.82       0  5889.80   22.79   42.73       0
+   268435456      67108864     float     sum      -1  12378.4   21.69   40.66       0  12555.3   21.38   40.09       0
+   536870912     134217728     float     sum      -1  26821.1   20.02   37.53       0  27086.1   19.82   37.16       0
+  1073741824     268435456     float     sum      -1  54518.5   19.70   36.93       0  54120.5   19.84   37.20       0
+  2147483648     536870912     float     sum      -1   107708   19.94   37.38       0   108321   19.83   37.17       0
+  4294967296    1073741824     float     sum      -1   216365   19.85   37.22       0   214972   19.98   37.46       0
+  8589934592    2147483648     float     sum      -1   432416   19.86   37.25       0   431959   19.89   37.29       0
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 19.0991
+#
+# Collective test concluded: all_reduce_perf
+#
+
+# nccl-tests version 2.18.3 nccl-headers=23003 nccl-library=23003
+# Collective test starting: alltoall_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid 2491556 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid 2491557 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid 2491558 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid 2491559 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid 2491560 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid 2491561 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid 2491562 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid 2491563 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid 1656828 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid 1656829 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid 1656830 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid 1656831 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid 1656832 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid 1656833 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid 1656834 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid 1656835 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.30.3+cuda13.0
+#
+#                                                              out-of-place                       in-place
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)
+        1024            16     float    none      -1    57.75    0.02    0.02       0    48.40    0.02    0.02    N/A
+        2048            32     float    none      -1    48.86    0.04    0.04       0    48.92    0.04    0.04    N/A
+        4096            64     float    none      -1    48.49    0.08    0.08       0    47.93    0.09    0.08    N/A
+        8192           128     float    none      -1    48.11    0.17    0.16       0    48.14    0.17    0.16    N/A
+       16384           256     float    none      -1    48.61    0.34    0.32       0    49.49    0.33    0.31    N/A
+       32768           512     float    none      -1    49.24    0.67    0.62       0    48.22    0.68    0.64    N/A
+       65536          1024     float    none      -1    49.38    1.33    1.24       0    49.01    1.34    1.25    N/A
+      131072          2048     float    none      -1    51.16    2.56    2.40       0    50.34    2.60    2.44    N/A
+      262144          4096     float    none      -1    63.38    4.14    3.88       0    67.11    3.91    3.66    N/A
+      524288          8192     float    none      -1    65.14    8.05    7.55       0    64.98    8.07    7.56    N/A
+     1048576         16384     float    none      -1   100.23   10.46    9.81       0    87.52   11.98   11.23    N/A
+     2097152         32768     float    none      -1   107.02   19.60   18.37       0   102.28   20.50   19.22    N/A
+     4194304         65536     float    none      -1   180.01   23.30   21.84       0   164.53   25.49   23.90    N/A
+     8388608        131072     float    none      -1   268.84   31.20   29.25       0   264.97   31.66   29.68    N/A
+    16777216        262144     float    none      -1   446.51   37.57   35.23       0   439.80   38.15   35.76    N/A
+    33554432        524288     float    none      -1   762.16   44.03   41.27       0   746.88   44.93   42.12    N/A
+    67108864       1048576     float    none      -1  1446.69   46.39   43.49       0  1396.96   48.04   45.04    N/A
+   134217728       2097152     float    none      -1  2796.37   48.00   45.00       0  2824.45   47.52   44.55    N/A
+   268435456       4194304     float    none      -1  5569.61   48.20   45.18       0  5637.65   47.61   44.64    N/A
+   536870912       8388608     float    none      -1  11136.4   48.21   45.20       0  11234.2   47.79   44.80    N/A
+  1073741824      16777216     float    none      -1  22038.3   48.72   45.68       0  22406.4   47.92   44.93    N/A
+  2147483648      33554432     float    none      -1  43910.6   48.91   45.85       0  44887.1   47.84   44.85    N/A
+  4294967296      67108864     float    none      -1  88417.4   48.58   45.54       0  89694.7   47.88   44.89    N/A
+  8589934592     134217728     float    none      -1   176558   48.65   45.61       0   179117   47.96   44.96    N/A
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 22.2992
+#
+# Collective test concluded: alltoall_perf
+#
+```
+
+### Case 2 — AR ON, DDP OFF
+
+```log
+root@R6KD-CX8aaS-GPU-11:~/jianxiong/script# ssh R6KD-CX8aaS-GPU-11 "/root/jianxiong/script/run_ar_on.sh"
+# nccl-tests version 2.18.3 nccl-headers=23003 nccl-library=23003
+# Collective test starting: all_reduce_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid 2493577 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid 2493578 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid 2493579 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid 2493580 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid 2493581 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid 2493582 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid 2493583 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid 2493584 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid 1658686 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid 1658687 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid 1658688 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid 1658689 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid 1658690 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid 1658691 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid 1658692 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid 1658693 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.30.3+cuda13.0
+#
+#                                                              out-of-place                       in-place
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)
+        1024           256     float     sum      -1    59.60    0.02    0.03       0    55.97    0.02    0.03       0
+        2048           512     float     sum      -1    58.35    0.04    0.07       0    58.13    0.04    0.07       0
+        4096          1024     float     sum      -1    64.64    0.06    0.12       0    64.41    0.06    0.12       0
+        8192          2048     float     sum      -1    73.41    0.11    0.21       0    68.80    0.12    0.22       0
+       16384          4096     float     sum      -1    79.17    0.21    0.39       0    71.36    0.23    0.43       0
+       32768          8192     float     sum      -1    90.24    0.36    0.68       0    91.87    0.36    0.67       0
+       65536         16384     float     sum      -1   110.90    0.59    1.11       0   110.65    0.59    1.11       0
+      131072         32768     float     sum      -1   117.77    1.11    2.09       0   115.28    1.14    2.13       0
+      262144         65536     float     sum      -1   148.79    1.76    3.30       0   152.47    1.72    3.22       0
+      524288        131072     float     sum      -1   203.26    2.58    4.84       0   203.10    2.58    4.84       0
+     1048576        262144     float     sum      -1   301.30    3.48    6.53       0   290.17    3.61    6.78       0
+     2097152        524288     float     sum      -1   468.98    4.47    8.38       0   453.29    4.63    8.67       0
+     4194304       1048576     float     sum      -1   807.30    5.20    9.74       0   773.39    5.42   10.17       0
+     8388608       2097152     float     sum      -1   529.07   15.86   29.73       0   533.39   15.73   29.49       0
+    16777216       4194304     float     sum      -1   852.83   19.67   36.89       0   849.34   19.75   37.04       0
+    33554432       8388608     float     sum      -1  1696.98   19.77   37.07       0  1705.95   19.67   36.88       0
+    67108864      16777216     float     sum      -1  3366.89   19.93   37.37       0  3341.35   20.08   37.66       0
+   134217728      33554432     float     sum      -1  5896.09   22.76   42.68       0  5888.41   22.79   42.74       0
+   268435456      67108864     float     sum      -1  12235.8   21.94   41.13       0  12232.3   21.94   41.15       0
+   536870912     134217728     float     sum      -1  26845.7   20.00   37.50       0  26898.0   19.96   37.42       0
+  1073741824     268435456     float     sum      -1  53486.2   20.08   37.64       0  53165.5   20.20   37.87       0
+  2147483648     536870912     float     sum      -1   106412   20.18   37.84       0   106943   20.08   37.65       0
+  4294967296    1073741824     float     sum      -1   212930   20.17   37.82       0   212686   20.19   37.86       0
+  8589934592    2147483648     float     sum      -1   425469   20.19   37.86       0   424275   20.25   37.96       0
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 18.8166
+#
+# Collective test concluded: all_reduce_perf
+#
+
+# nccl-tests version 2.18.3 nccl-headers=23003 nccl-library=23003
+# Collective test starting: alltoall_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid 2493805 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid 2493806 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid 2493807 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid 2493808 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid 2493809 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid 2493810 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid 2493811 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid 2493812 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid 1658931 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid 1658932 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid 1658933 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid 1658934 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid 1658935 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid 1658936 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid 1658937 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid 1658938 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.30.3+cuda13.0
+#
+#                                                              out-of-place                       in-place
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)
+        1024            16     float    none      -1    52.39    0.02    0.02       0    48.25    0.02    0.02    N/A
+        2048            32     float    none      -1    48.58    0.04    0.04       0    48.19    0.04    0.04    N/A
+        4096            64     float    none      -1    49.09    0.08    0.08       0    49.68    0.08    0.08    N/A
+        8192           128     float    none      -1    48.94    0.17    0.16       0    48.47    0.17    0.16    N/A
+       16384           256     float    none      -1    49.19    0.33    0.31       0    48.68    0.34    0.32    N/A
+       32768           512     float    none      -1    50.08    0.65    0.61       0    50.47    0.65    0.61    N/A
+       65536          1024     float    none      -1    50.00    1.31    1.23       0    49.43    1.33    1.24    N/A
+      131072          2048     float    none      -1    52.28    2.51    2.35       0    52.46    2.50    2.34    N/A
+      262144          4096     float    none      -1    87.00    3.01    2.82       0    72.34    3.62    3.40    N/A
+      524288          8192     float    none      -1    77.51    6.76    6.34       0    77.04    6.81    6.38    N/A
+     1048576         16384     float    none      -1   110.06    9.53    8.93       0   108.64    9.65    9.05    N/A
+     2097152         32768     float    none      -1   132.82   15.79   14.80       0   124.74   16.81   15.76    N/A
+     4194304         65536     float    none      -1   193.86   21.64   20.28       0   188.86   22.21   20.82    N/A
+     8388608        131072     float    none      -1   290.01   28.93   27.12       0   282.54   29.69   27.83    N/A
+    16777216        262144     float    none      -1   485.25   34.57   32.41       0   474.85   35.33   33.12    N/A
+    33554432        524288     float    none      -1   795.49   42.18   39.54       0   770.37   43.56   40.83    N/A
+    67108864       1048576     float    none      -1  1459.73   45.97   43.10       0  1454.83   46.13   43.25    N/A
+   134217728       2097152     float    none      -1  2809.90   47.77   44.78       0  2849.53   47.10   44.16    N/A
+   268435456       4194304     float    none      -1  5510.51   48.71   45.67       0  5616.34   47.80   44.81    N/A
+   536870912       8388608     float    none      -1  10872.4   49.38   46.29       0  11047.4   48.60   45.56    N/A
+  1073741824      16777216     float    none      -1  21770.6   49.32   46.24       0  21999.5   48.81   45.76    N/A
+  2147483648      33554432     float    none      -1  43372.0   49.51   46.42       0  43849.5   48.97   45.91    N/A
+  4294967296      67108864     float    none      -1  86616.0   49.59   46.49       0  87726.4   48.96   45.90    N/A
+  8589934592     134217728     float    none      -1   173248   49.58   46.48       0   175001   49.09   46.02    N/A
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 21.7893
+#
+# Collective test concluded: alltoall_perf
+#
+```
+
+### Case 3 — AR ON, DDP ON
+
+```log
+root@R6KD-CX8aaS-GPU-11:~/jianxiong/script# ssh R6KD-CX8aaS-GPU-11 "/root/jianxiong/script/run_ar_on_ddp_on.sh"
+# nccl-tests version 2.18.3 nccl-headers=23003 nccl-library=23003
+# Collective test starting: all_reduce_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid 2494418 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid 2494419 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid 2494420 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid 2494421 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid 2494422 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid 2494423 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid 2494424 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid 2494425 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid 1659491 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid 1659492 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid 1659493 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid 1659494 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid 1659495 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid 1659496 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid 1659497 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid 1659498 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.30.3+cuda13.0
+#
+#                                                              out-of-place                       in-place
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)
+        1024           256     float     sum      -1    59.36    0.02    0.03       0    55.28    0.02    0.03       0
+        2048           512     float     sum      -1    57.94    0.04    0.07       0    57.63    0.04    0.07       0
+        4096          1024     float     sum      -1    63.84    0.06    0.12       0    64.39    0.06    0.12       0
+        8192          2048     float     sum      -1    70.36    0.12    0.22       0    67.61    0.12    0.23       0
+       16384          4096     float     sum      -1    83.37    0.20    0.37       0    71.77    0.23    0.43       0
+       32768          8192     float     sum      -1    86.90    0.38    0.71       0    85.14    0.38    0.72       0
+       65536         16384     float     sum      -1   107.13    0.61    1.15       0   106.34    0.62    1.16       0
+      131072         32768     float     sum      -1   100.28    1.31    2.45       0    99.46    1.32    2.47       0
+      262144         65536     float     sum      -1   121.25    2.16    4.05       0   115.85    2.26    4.24       0
+      524288        131072     float     sum      -1   143.57    3.65    6.85       0   145.89    3.59    6.74       0
+     1048576        262144     float     sum      -1   233.09    4.50    8.44       0   227.86    4.60    8.63       0
+     2097152        524288     float     sum      -1   383.93    5.46   10.24       0   381.43    5.50   10.31       0
+     4194304       1048576     float     sum      -1   685.23    6.12   11.48       0   661.03    6.35   11.90       0
+     8388608       2097152     float     sum      -1   485.14   17.29   32.42       0   490.01   17.12   32.10       0
+    16777216       4194304     float     sum      -1   815.37   20.58   38.58       0   823.82   20.37   38.18       0
+    33554432       8388608     float     sum      -1  1715.66   19.56   36.67       0  1704.35   19.69   36.91       0
+    67108864      16777216     float     sum      -1  3743.39   17.93   33.61       0  3784.17   17.73   33.25       0
+   134217728      33554432     float     sum      -1  6000.94   22.37   41.94       0  6015.94   22.31   41.83       0
+   268435456      67108864     float     sum      -1  12703.4   21.13   39.62       0  12590.7   21.32   39.98       0
+   536870912     134217728     float     sum      -1  26781.1   20.05   37.59       0  27213.3   19.73   36.99       0
+  1073741824     268435456     float     sum      -1  54796.4   19.60   36.74       0  54411.7   19.73   37.00       0
+  2147483648     536870912     float     sum      -1   108867   19.73   36.99       0   109415   19.63   36.80       0
+  4294967296    1073741824     float     sum      -1   218004   19.70   36.94       0   218033   19.70   36.94       0
+  8589934592    2147483648     float     sum      -1   436480   19.68   36.90       0   436359   19.69   36.91       0
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 18.9186
+#
+# Collective test concluded: all_reduce_perf
+#
+
+# nccl-tests version 2.18.3 nccl-headers=23003 nccl-library=23003
+# Collective test starting: alltoall_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid 2494637 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid 2494638 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid 2494639 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid 2494640 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid 2494641 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid 2494642 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid 2494643 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid 2494644 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid 1659723 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid 1659724 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid 1659725 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid 1659726 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid 1659727 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid 1659728 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid 1659729 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid 1659730 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.30.3+cuda13.0
+#
+#                                                              out-of-place                       in-place
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)
+        1024            16     float    none      -1    56.05    0.02    0.02       0    49.18    0.02    0.02    N/A
+        2048            32     float    none      -1    50.30    0.04    0.04       0    49.13    0.04    0.04    N/A
+        4096            64     float    none      -1    49.10    0.08    0.08       0    48.49    0.08    0.08    N/A
+        8192           128     float    none      -1    48.77    0.17    0.16       0    48.58    0.17    0.16    N/A
+       16384           256     float    none      -1    49.07    0.33    0.31       0    48.98    0.33    0.31    N/A
+       32768           512     float    none      -1    49.65    0.66    0.62       0    49.02    0.67    0.63    N/A
+       65536          1024     float    none      -1    50.69    1.29    1.21       0    49.55    1.32    1.24    N/A
+      131072          2048     float    none      -1    52.45    2.50    2.34       0    52.01    2.52    2.36    N/A
+      262144          4096     float    none      -1    53.52    4.90    4.59       0    60.87    4.31    4.04    N/A
+      524288          8192     float    none      -1    65.32    8.03    7.52       0    65.66    7.98    7.49    N/A
+     1048576         16384     float    none      -1    92.21   11.37   10.66       0    92.22   11.37   10.66    N/A
+     2097152         32768     float    none      -1   103.43   20.28   19.01       0   104.28   20.11   18.85    N/A
+     4194304         65536     float    none      -1   170.80   24.56   23.02       0   168.50   24.89   23.34    N/A
+     8388608        131072     float    none      -1   260.58   32.19   30.18       0   253.35   33.11   31.04    N/A
+    16777216        262144     float    none      -1   440.28   38.11   35.72       0   432.66   38.78   36.35    N/A
+    33554432        524288     float    none      -1   752.31   44.60   41.81       0   741.67   45.24   42.41    N/A
+    67108864       1048576     float    none      -1  1419.14   47.29   44.33       0  1398.11   48.00   45.00    N/A
+   134217728       2097152     float    none      -1  2795.79   48.01   45.01       0  2828.77   47.45   44.48    N/A
+   268435456       4194304     float    none      -1  5565.22   48.23   45.22       0  5641.75   47.58   44.61    N/A
+   536870912       8388608     float    none      -1  11168.4   48.07   45.07       0  11315.4   47.45   44.48    N/A
+  1073741824      16777216     float    none      -1  22304.2   48.14   45.13       0  22662.1   47.38   44.42    N/A
+  2147483648      33554432     float    none      -1  44500.9   48.26   45.24       0  45219.0   47.49   44.52    N/A
+  4294967296      67108864     float    none      -1  89193.7   48.15   45.14       0  90523.6   47.45   44.48    N/A
+  8589934592     134217728     float    none      -1   177912   48.28   45.26       0   180896   47.49   44.52    N/A
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 22.3592
+#
+# Collective test concluded: alltoall_perf
+#
+```
