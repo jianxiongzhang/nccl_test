@@ -1,0 +1,684 @@
+========================================
+CASE1: AR OFF a2a run 1/3
+Started: 2026-04-23T08:31:05+00:00
+========================================
+COMMAND:
+mpirun --allow-run-as-root --hostfile /workspace/hostfile -npernode 8 --bind-to none --map-by slot -mca plm_rsh_args -p\ 3456 --mca pml ucx --mca btl \^openib -mca btl_tcp_if_include bond0 -mca oob_tcp_if_include bond0 -x NCCL_NET_PLUGIN=spcx -x NCCL_DEBUG=WARN -x NCCL_DEBUG_SUBSYS=GRAPH\,NET\,TUNING -x NCCL_SHM_DISABLE=1 -x UCX_TLS=rc -x NCCL_SOCKET_IFNAME=bond0 -x NCCL_IB_HCA=mlx5_2\,mlx5_3\,mlx5_0\,mlx5_1\,mlx5_6\,mlx5_7\,mlx5_4\,mlx5_5 -x NCCL_IB_GID_INDEX=3 -x NCCL_IB_TC=96 -x NCCL_CROSS_NIC=1 -x NCCL_BUFFSIZE=16777216 -x NCCL_IB_QPS_PER_CONNECTION=2 -x NCCL_NCHANNELS_PER_NET_PEER=4 -x NCCL_P2P_NET_CHUNKSIZE=262144 -x NCCL_IB_TIMEOUT=1 -x NCCL_IB_RETRY_CNT=1 -x NCCL_IB_RESILIENCY_PORT_FAILOVER=0 -x NCCL_P2P_DISABLE=1 -x LD_LIBRARY_PATH=/workspace/nccl/build/lib:/workspace/hpcx-v2.26-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64/nccl_spectrum-x_plugin/lib:/workspace/nccl/build/lib -x NCCL_IB_ADAPTIVE_ROUTING=0 -x NCCL_IB_OOO_RQ=0 -x NCCL_IB_RECEIVER_SIDE_MATCHING_SCHEME=0 -x NCCL_IB_PREPOST_RECEIVE_WORK_REQUESTS=0 /workspace/nccl-tests/build/alltoall_perf -b 1k -e 8G -f 2 -g 1
+
+--------------------------------------------------------------------------
+Two mutually-exclusive MCA variables were specified.  This can result
+in undefined behavior, such as ignoring the components that the MCA
+variables are supposed to affect.
+
+  1st MCA variable: btl_tcp_if_include
+    Source of value: environment
+  2nd MCA variable: btl_tcp_if_exclude
+    Source of value: file (/opt/hpcx/ompi/etc/openmpi-mca-params.conf:97)
+--------------------------------------------------------------------------
+# nccl-tests version 2.18.3 nccl-headers=22907 nccl-library=22907
+# Collective test starting: alltoall_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid  94789 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid  94790 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid  94791 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid  94792 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid  94793 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid  94794 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid  94795 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid  94796 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid  96752 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid  96753 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid  96754 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid  96755 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid  96756 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid  96757 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid  96758 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid  96759 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.29.7+cuda13.0
+#
+#                                                              out-of-place                       in-place          
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong 
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)         
+[R6KD-CX8aaS-GPU-11:94784] 15 more processes have sent help message help-mca-var.txt / mutually-exclusive-vars
+[R6KD-CX8aaS-GPU-11:94784] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+        1024            16     float    none      -1    51.12    0.02    0.02       0    45.68    0.02    0.02    N/A
+        2048            32     float    none      -1    45.88    0.04    0.04       0    45.69    0.04    0.04    N/A
+        4096            64     float    none      -1    46.34    0.09    0.08       0    45.75    0.09    0.08    N/A
+        8192           128     float    none      -1    46.31    0.18    0.17       0    45.97    0.18    0.17    N/A
+       16384           256     float    none      -1    46.59    0.35    0.33       0    46.22    0.35    0.33    N/A
+       32768           512     float    none      -1    47.14    0.70    0.65       0    46.56    0.70    0.66    N/A
+       65536          1024     float    none      -1    47.14    1.39    1.30       0    47.73    1.37    1.29    N/A
+      131072          2048     float    none      -1    49.97    2.62    2.46       0    58.87    2.23    2.09    N/A
+      262144          4096     float    none      -1    53.10    4.94    4.63       0    59.77    4.39    4.11    N/A
+      524288          8192     float    none      -1    64.96    8.07    7.57       0    62.83    8.34    7.82    N/A
+     1048576         16384     float    none      -1    75.40   13.91   13.04       0    73.34   14.30   13.40    N/A
+     2097152         32768     float    none      -1   103.72   20.22   18.96       0    99.78   21.02   19.70    N/A
+     4194304         65536     float    none      -1   150.69   27.83   26.09       0   145.19   28.89   27.08    N/A
+     8388608        131072     float    none      -1   273.53   30.67   28.75       0   258.43   32.46   30.43    N/A
+    16777216        262144     float    none      -1   558.56   30.04   28.16       0   552.65   30.36   28.46    N/A
+    33554432        524288     float    none      -1  1065.76   31.48   29.52       0   995.10   33.72   31.61    N/A
+    67108864       1048576     float    none      -1  1780.87   37.68   35.33       0  1707.77   39.30   36.84    N/A
+   134217728       2097152     float    none      -1  3026.44   44.35   41.58       0  3001.36   44.72   41.92    N/A
+   268435456       4194304     float    none      -1  5705.94   47.04   44.10       0  5684.41   47.22   44.27    N/A
+   536870912       8388608     float    none      -1  11192.7   47.97   44.97       0  11256.9   47.69   44.71    N/A
+  1073741824      16777216     float    none      -1  21949.1   48.92   45.86       0  22059.3   48.68   45.63    N/A
+  2147483648      33554432     float    none      -1  43979.7   48.83   45.78       0  43846.6   48.98   45.92    N/A
+  4294967296      67108864     float    none      -1  87767.9   48.94   45.88       0  87194.7   49.26   46.18    N/A
+  8589934592     134217728     float    none      -1   174757   49.15   46.08       0   173883   49.40   46.31    N/A
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 21.4674 
+#
+# Collective test concluded: alltoall_perf
+#
+
+
+========================================
+CASE1: AR OFF a2a run 2/3
+Started: 2026-04-23T08:31:32+00:00
+========================================
+COMMAND:
+mpirun --allow-run-as-root --hostfile /workspace/hostfile -npernode 8 --bind-to none --map-by slot -mca plm_rsh_args -p\ 3456 --mca pml ucx --mca btl \^openib -mca btl_tcp_if_include bond0 -mca oob_tcp_if_include bond0 -x NCCL_NET_PLUGIN=spcx -x NCCL_DEBUG=WARN -x NCCL_DEBUG_SUBSYS=GRAPH\,NET\,TUNING -x NCCL_SHM_DISABLE=1 -x UCX_TLS=rc -x NCCL_SOCKET_IFNAME=bond0 -x NCCL_IB_HCA=mlx5_2\,mlx5_3\,mlx5_0\,mlx5_1\,mlx5_6\,mlx5_7\,mlx5_4\,mlx5_5 -x NCCL_IB_GID_INDEX=3 -x NCCL_IB_TC=96 -x NCCL_CROSS_NIC=1 -x NCCL_BUFFSIZE=16777216 -x NCCL_IB_QPS_PER_CONNECTION=2 -x NCCL_NCHANNELS_PER_NET_PEER=4 -x NCCL_P2P_NET_CHUNKSIZE=262144 -x NCCL_IB_TIMEOUT=1 -x NCCL_IB_RETRY_CNT=1 -x NCCL_IB_RESILIENCY_PORT_FAILOVER=0 -x NCCL_P2P_DISABLE=1 -x LD_LIBRARY_PATH=/workspace/nccl/build/lib:/workspace/hpcx-v2.26-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64/nccl_spectrum-x_plugin/lib:/workspace/nccl/build/lib -x NCCL_IB_ADAPTIVE_ROUTING=0 -x NCCL_IB_OOO_RQ=0 -x NCCL_IB_RECEIVER_SIDE_MATCHING_SCHEME=0 -x NCCL_IB_PREPOST_RECEIVE_WORK_REQUESTS=0 /workspace/nccl-tests/build/alltoall_perf -b 1k -e 8G -f 2 -g 1
+
+--------------------------------------------------------------------------
+Two mutually-exclusive MCA variables were specified.  This can result
+in undefined behavior, such as ignoring the components that the MCA
+variables are supposed to affect.
+
+  1st MCA variable: btl_tcp_if_include
+    Source of value: environment
+  2nd MCA variable: btl_tcp_if_exclude
+    Source of value: file (/opt/hpcx/ompi/etc/openmpi-mca-params.conf:97)
+--------------------------------------------------------------------------
+# nccl-tests version 2.18.3 nccl-headers=22907 nccl-library=22907
+# Collective test starting: alltoall_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid  95030 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid  95031 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid  95032 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid  95033 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid  95034 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid  95035 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid  95036 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid  95037 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid  97030 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid  97031 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid  97032 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid  97033 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid  97034 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid  97035 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid  97036 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid  97037 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.29.7+cuda13.0
+#
+#                                                              out-of-place                       in-place          
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong 
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)         
+[R6KD-CX8aaS-GPU-11:95025] 15 more processes have sent help message help-mca-var.txt / mutually-exclusive-vars
+[R6KD-CX8aaS-GPU-11:95025] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+        1024            16     float    none      -1    49.67    0.02    0.02       0    45.55    0.02    0.02    N/A
+        2048            32     float    none      -1    45.82    0.04    0.04       0    45.61    0.04    0.04    N/A
+        4096            64     float    none      -1    45.63    0.09    0.08       0    45.87    0.09    0.08    N/A
+        8192           128     float    none      -1    45.74    0.18    0.17       0    45.51    0.18    0.17    N/A
+       16384           256     float    none      -1    46.26    0.35    0.33       0    46.18    0.35    0.33    N/A
+       32768           512     float    none      -1    46.62    0.70    0.66       0    46.32    0.71    0.66    N/A
+       65536          1024     float    none      -1    47.45    1.38    1.29       0    46.67    1.40    1.32    N/A
+      131072          2048     float    none      -1    49.54    2.65    2.48       0    49.72    2.64    2.47    N/A
+      262144          4096     float    none      -1    51.08    5.13    4.81       0    58.09    4.51    4.23    N/A
+      524288          8192     float    none      -1    61.77    8.49    7.96       0    62.21    8.43    7.90    N/A
+     1048576         16384     float    none      -1    75.67   13.86   12.99       0    72.89   14.38   13.49    N/A
+     2097152         32768     float    none      -1   101.77   20.61   19.32       0    98.31   21.33   20.00    N/A
+     4194304         65536     float    none      -1   149.81   28.00   26.25       0   144.88   28.95   27.14    N/A
+     8388608        131072     float    none      -1   268.64   31.23   29.27       0   252.77   33.19   31.11    N/A
+    16777216        262144     float    none      -1   551.10   30.44   28.54       0   529.39   31.69   29.71    N/A
+    33554432        524288     float    none      -1  1068.23   31.41   29.45       0   993.06   33.79   31.68    N/A
+    67108864       1048576     float    none      -1  1775.33   37.80   35.44       0  1696.22   39.56   37.09    N/A
+   134217728       2097152     float    none      -1  3052.06   43.98   41.23       0  2981.30   45.02   42.21    N/A
+   268435456       4194304     float    none      -1  5699.12   47.10   44.16       0  5695.10   47.13   44.19    N/A
+   536870912       8388608     float    none      -1  11244.4   47.75   44.76       0  11158.9   48.11   45.10    N/A
+  1073741824      16777216     float    none      -1  22008.6   48.79   45.74       0  22223.0   48.32   45.30    N/A
+  2147483648      33554432     float    none      -1  43992.9   48.81   45.76       0  44210.6   48.57   45.54    N/A
+  4294967296      67108864     float    none      -1  87669.9   48.99   45.93       0  87878.4   48.87   45.82    N/A
+  8589934592     134217728     float    none      -1   175078   49.06   46.00       0   174857   49.13   46.06    N/A
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 21.5487 
+#
+# Collective test concluded: alltoall_perf
+#
+
+
+========================================
+CASE1: AR OFF a2a run 3/3
+Started: 2026-04-23T08:31:59+00:00
+========================================
+COMMAND:
+mpirun --allow-run-as-root --hostfile /workspace/hostfile -npernode 8 --bind-to none --map-by slot -mca plm_rsh_args -p\ 3456 --mca pml ucx --mca btl \^openib -mca btl_tcp_if_include bond0 -mca oob_tcp_if_include bond0 -x NCCL_NET_PLUGIN=spcx -x NCCL_DEBUG=WARN -x NCCL_DEBUG_SUBSYS=GRAPH\,NET\,TUNING -x NCCL_SHM_DISABLE=1 -x UCX_TLS=rc -x NCCL_SOCKET_IFNAME=bond0 -x NCCL_IB_HCA=mlx5_2\,mlx5_3\,mlx5_0\,mlx5_1\,mlx5_6\,mlx5_7\,mlx5_4\,mlx5_5 -x NCCL_IB_GID_INDEX=3 -x NCCL_IB_TC=96 -x NCCL_CROSS_NIC=1 -x NCCL_BUFFSIZE=16777216 -x NCCL_IB_QPS_PER_CONNECTION=2 -x NCCL_NCHANNELS_PER_NET_PEER=4 -x NCCL_P2P_NET_CHUNKSIZE=262144 -x NCCL_IB_TIMEOUT=1 -x NCCL_IB_RETRY_CNT=1 -x NCCL_IB_RESILIENCY_PORT_FAILOVER=0 -x NCCL_P2P_DISABLE=1 -x LD_LIBRARY_PATH=/workspace/nccl/build/lib:/workspace/hpcx-v2.26-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64/nccl_spectrum-x_plugin/lib:/workspace/nccl/build/lib -x NCCL_IB_ADAPTIVE_ROUTING=0 -x NCCL_IB_OOO_RQ=0 -x NCCL_IB_RECEIVER_SIDE_MATCHING_SCHEME=0 -x NCCL_IB_PREPOST_RECEIVE_WORK_REQUESTS=0 /workspace/nccl-tests/build/alltoall_perf -b 1k -e 8G -f 2 -g 1
+
+--------------------------------------------------------------------------
+Two mutually-exclusive MCA variables were specified.  This can result
+in undefined behavior, such as ignoring the components that the MCA
+variables are supposed to affect.
+
+  1st MCA variable: btl_tcp_if_include
+    Source of value: environment
+  2nd MCA variable: btl_tcp_if_exclude
+    Source of value: file (/opt/hpcx/ompi/etc/openmpi-mca-params.conf:97)
+--------------------------------------------------------------------------
+# nccl-tests version 2.18.3 nccl-headers=22907 nccl-library=22907
+# Collective test starting: alltoall_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid  95274 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid  95275 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid  95276 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid  95277 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid  95278 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid  95279 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid  95280 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid  95281 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid  97308 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid  97309 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid  97310 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid  97311 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid  97312 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid  97313 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid  97314 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid  97315 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.29.7+cuda13.0
+#
+#                                                              out-of-place                       in-place          
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong 
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)         
+[R6KD-CX8aaS-GPU-11:95269] 15 more processes have sent help message help-mca-var.txt / mutually-exclusive-vars
+[R6KD-CX8aaS-GPU-11:95269] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+        1024            16     float    none      -1    51.38    0.02    0.02       0    46.50    0.02    0.02    N/A
+        2048            32     float    none      -1    48.58    0.04    0.04       0    46.52    0.04    0.04    N/A
+        4096            64     float    none      -1    47.50    0.09    0.08       0    45.80    0.09    0.08    N/A
+        8192           128     float    none      -1    47.44    0.17    0.16       0    46.00    0.18    0.17    N/A
+       16384           256     float    none      -1    49.34    0.33    0.31       0    50.18    0.33    0.31    N/A
+       32768           512     float    none      -1    47.32    0.69    0.65       0    46.60    0.70    0.66    N/A
+       65536          1024     float    none      -1    47.48    1.38    1.29       0    48.44    1.35    1.27    N/A
+      131072          2048     float    none      -1    49.73    2.64    2.47       0    50.62    2.59    2.43    N/A
+      262144          4096     float    none      -1    51.37    5.10    4.78       0    57.00    4.60    4.31    N/A
+      524288          8192     float    none      -1    62.63    8.37    7.85       0    64.63    8.11    7.61    N/A
+     1048576         16384     float    none      -1    75.28   13.93   13.06       0    73.33   14.30   13.41    N/A
+     2097152         32768     float    none      -1   100.40   20.89   19.58       0    99.31   21.12   19.80    N/A
+     4194304         65536     float    none      -1   149.94   27.97   26.22       0   145.68   28.79   26.99    N/A
+     8388608        131072     float    none      -1   272.02   30.84   28.91       0   258.48   32.45   30.43    N/A
+    16777216        262144     float    none      -1   560.47   29.93   28.06       0   525.03   31.95   29.96    N/A
+    33554432        524288     float    none      -1  1067.95   31.42   29.46       0   994.15   33.75   31.64    N/A
+    67108864       1048576     float    none      -1  1774.48   37.82   35.46       0  1698.46   39.51   37.04    N/A
+   134217728       2097152     float    none      -1  3040.18   44.15   41.39       0  2987.32   44.93   42.12    N/A
+   268435456       4194304     float    none      -1  5693.58   47.15   44.20       0  5711.77   47.00   44.06    N/A
+   536870912       8388608     float    none      -1  11112.9   48.31   45.29       0  11089.1   48.41   45.39    N/A
+  1073741824      16777216     float    none      -1  22040.9   48.72   45.67       0  22205.9   48.35   45.33    N/A
+  2147483648      33554432     float    none      -1  43920.5   48.89   45.84       0  43780.6   49.05   45.99    N/A
+  4294967296      67108864     float    none      -1  87487.2   49.09   46.02       0  87214.2   49.25   46.17    N/A
+  8589934592     134217728     float    none      -1   174667   49.18   46.11       0   173879   49.40   46.31    N/A
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 21.551 
+#
+# Collective test concluded: alltoall_perf
+#
+
+
+========================================
+CASE2: AR ON DDP OFF a2a run 1/3
+Started: 2026-04-23T08:34:43+00:00
+========================================
+COMMAND:
+mpirun --allow-run-as-root --hostfile /workspace/hostfile -npernode 8 --bind-to none --map-by slot -mca plm_rsh_args -p\ 3456 --mca pml ucx --mca btl \^openib -mca btl_tcp_if_include bond0 -mca oob_tcp_if_include bond0 -x NCCL_NET_PLUGIN=spcx -x NCCL_DEBUG=WARN -x NCCL_DEBUG_SUBSYS=GRAPH\,NET\,TUNING -x NCCL_SHM_DISABLE=1 -x UCX_TLS=rc -x NCCL_SOCKET_IFNAME=bond0 -x NCCL_IB_HCA=mlx5_2\,mlx5_3\,mlx5_0\,mlx5_1\,mlx5_6\,mlx5_7\,mlx5_4\,mlx5_5 -x NCCL_IB_GID_INDEX=3 -x NCCL_IB_TC=96 -x NCCL_CROSS_NIC=1 -x NCCL_BUFFSIZE=16777216 -x NCCL_IB_QPS_PER_CONNECTION=2 -x NCCL_NCHANNELS_PER_NET_PEER=4 -x NCCL_P2P_NET_CHUNKSIZE=262144 -x NCCL_IB_TIMEOUT=1 -x NCCL_IB_RETRY_CNT=1 -x NCCL_IB_RESILIENCY_PORT_FAILOVER=0 -x NCCL_P2P_DISABLE=1 -x LD_LIBRARY_PATH=/workspace/nccl/build/lib:/workspace/hpcx-v2.26-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64/nccl_spectrum-x_plugin/lib:/workspace/nccl/build/lib -x NCCL_IB_ADAPTIVE_ROUTING=1 -x NCCL_IB_OOO_RQ=0 -x NCCL_IB_RECEIVER_SIDE_MATCHING_SCHEME=0 -x NCCL_IB_PREPOST_RECEIVE_WORK_REQUESTS=0 /workspace/nccl-tests/build/alltoall_perf -b 1k -e 8G -f 2 -g 1
+
+--------------------------------------------------------------------------
+Two mutually-exclusive MCA variables were specified.  This can result
+in undefined behavior, such as ignoring the components that the MCA
+variables are supposed to affect.
+
+  1st MCA variable: btl_tcp_if_include
+    Source of value: environment
+  2nd MCA variable: btl_tcp_if_exclude
+    Source of value: file (/opt/hpcx/ompi/etc/openmpi-mca-params.conf:97)
+--------------------------------------------------------------------------
+# nccl-tests version 2.18.3 nccl-headers=22907 nccl-library=22907
+# Collective test starting: alltoall_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid  96243 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid  96244 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid  96245 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid  96246 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid  96247 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid  96248 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid  96249 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid  96250 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid  98420 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid  98421 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid  98422 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid  98423 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid  98424 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid  98425 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid  98426 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid  98427 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.29.7+cuda13.0
+#
+#                                                              out-of-place                       in-place          
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong 
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)         
+[R6KD-CX8aaS-GPU-11:96238] 15 more processes have sent help message help-mca-var.txt / mutually-exclusive-vars
+[R6KD-CX8aaS-GPU-11:96238] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+        1024            16     float    none      -1    53.12    0.02    0.02       0    47.51    0.02    0.02    N/A
+        2048            32     float    none      -1    47.12    0.04    0.04       0    46.85    0.04    0.04    N/A
+        4096            64     float    none      -1    47.10    0.09    0.08       0    46.95    0.09    0.08    N/A
+        8192           128     float    none      -1    47.27    0.17    0.16       0    47.01    0.17    0.16    N/A
+       16384           256     float    none      -1    47.68    0.34    0.32       0    47.71    0.34    0.32    N/A
+       32768           512     float    none      -1    48.25    0.68    0.64       0    47.62    0.69    0.65    N/A
+       65536          1024     float    none      -1    48.23    1.36    1.27       0    49.46    1.33    1.24    N/A
+      131072          2048     float    none      -1    50.74    2.58    2.42       0    50.00    2.62    2.46    N/A
+      262144          4096     float    none      -1    68.32    3.84    3.60       0    74.07    3.54    3.32    N/A
+      524288          8192     float    none      -1    79.02    6.63    6.22       0    74.60    7.03    6.59    N/A
+     1048576         16384     float    none      -1    91.62   11.45   10.73       0    89.50   11.72   10.98    N/A
+     2097152         32768     float    none      -1   120.65   17.38   16.30       0   122.81   17.08   16.01    N/A
+     4194304         65536     float    none      -1   173.35   24.20   22.68       0   168.59   24.88   23.32    N/A
+     8388608        131072     float    none      -1   323.03   25.97   24.35       0   310.87   26.98   25.30    N/A
+    16777216        262144     float    none      -1   630.05   26.63   24.96       0   607.25   27.63   25.90    N/A
+    33554432        524288     float    none      -1  1154.34   29.07   27.25       0  1093.31   30.69   28.77    N/A
+    67108864       1048576     float    none      -1  1876.23   35.77   33.53       0  1829.12   36.69   34.40    N/A
+   134217728       2097152     float    none      -1  3243.09   41.39   38.80       0  3235.05   41.49   38.90    N/A
+   268435456       4194304     float    none      -1  6032.12   44.50   41.72       0  6060.18   44.29   41.53    N/A
+   536870912       8388608     float    none      -1  11884.5   45.17   42.35       0  12032.2   44.62   41.83    N/A
+  1073741824      16777216     float    none      -1  23536.8   45.62   42.77       0  23732.5   45.24   42.42    N/A
+  2147483648      33554432     float    none      -1  47341.7   45.36   42.53       0  46928.8   45.76   42.90    N/A
+  4294967296      67108864     float    none      -1  93833.6   45.77   42.91       0  93454.5   45.96   43.09    N/A
+  8589934592     134217728     float    none      -1   187288   45.86   43.00       0   185751   46.24   43.35    N/A
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 19.6297 
+#
+# Collective test concluded: alltoall_perf
+#
+
+
+========================================
+CASE2: AR ON DDP OFF a2a run 2/3
+Started: 2026-04-23T08:35:11+00:00
+========================================
+COMMAND:
+mpirun --allow-run-as-root --hostfile /workspace/hostfile -npernode 8 --bind-to none --map-by slot -mca plm_rsh_args -p\ 3456 --mca pml ucx --mca btl \^openib -mca btl_tcp_if_include bond0 -mca oob_tcp_if_include bond0 -x NCCL_NET_PLUGIN=spcx -x NCCL_DEBUG=WARN -x NCCL_DEBUG_SUBSYS=GRAPH\,NET\,TUNING -x NCCL_SHM_DISABLE=1 -x UCX_TLS=rc -x NCCL_SOCKET_IFNAME=bond0 -x NCCL_IB_HCA=mlx5_2\,mlx5_3\,mlx5_0\,mlx5_1\,mlx5_6\,mlx5_7\,mlx5_4\,mlx5_5 -x NCCL_IB_GID_INDEX=3 -x NCCL_IB_TC=96 -x NCCL_CROSS_NIC=1 -x NCCL_BUFFSIZE=16777216 -x NCCL_IB_QPS_PER_CONNECTION=2 -x NCCL_NCHANNELS_PER_NET_PEER=4 -x NCCL_P2P_NET_CHUNKSIZE=262144 -x NCCL_IB_TIMEOUT=1 -x NCCL_IB_RETRY_CNT=1 -x NCCL_IB_RESILIENCY_PORT_FAILOVER=0 -x NCCL_P2P_DISABLE=1 -x LD_LIBRARY_PATH=/workspace/nccl/build/lib:/workspace/hpcx-v2.26-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64/nccl_spectrum-x_plugin/lib:/workspace/nccl/build/lib -x NCCL_IB_ADAPTIVE_ROUTING=1 -x NCCL_IB_OOO_RQ=0 -x NCCL_IB_RECEIVER_SIDE_MATCHING_SCHEME=0 -x NCCL_IB_PREPOST_RECEIVE_WORK_REQUESTS=0 /workspace/nccl-tests/build/alltoall_perf -b 1k -e 8G -f 2 -g 1
+
+--------------------------------------------------------------------------
+Two mutually-exclusive MCA variables were specified.  This can result
+in undefined behavior, such as ignoring the components that the MCA
+variables are supposed to affect.
+
+  1st MCA variable: btl_tcp_if_include
+    Source of value: environment
+  2nd MCA variable: btl_tcp_if_exclude
+    Source of value: file (/opt/hpcx/ompi/etc/openmpi-mca-params.conf:97)
+--------------------------------------------------------------------------
+# nccl-tests version 2.18.3 nccl-headers=22907 nccl-library=22907
+# Collective test starting: alltoall_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid  96484 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid  96485 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid  96486 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid  96487 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid  96488 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid  96490 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid  96491 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid  96493 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid  98698 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid  98699 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid  98700 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid  98701 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid  98702 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid  98703 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid  98704 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid  98705 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.29.7+cuda13.0
+#
+#                                                              out-of-place                       in-place          
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong 
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)         
+[R6KD-CX8aaS-GPU-11:96479] 15 more processes have sent help message help-mca-var.txt / mutually-exclusive-vars
+[R6KD-CX8aaS-GPU-11:96479] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+        1024            16     float    none      -1    52.09    0.02    0.02       0    46.50    0.02    0.02    N/A
+        2048            32     float    none      -1    49.63    0.04    0.04       0    46.42    0.04    0.04    N/A
+        4096            64     float    none      -1    46.44    0.09    0.08       0    46.15    0.09    0.08    N/A
+        8192           128     float    none      -1    46.36    0.18    0.17       0    46.43    0.18    0.17    N/A
+       16384           256     float    none      -1    46.85    0.35    0.33       0    51.45    0.32    0.30    N/A
+       32768           512     float    none      -1    47.16    0.69    0.65       0    46.93    0.70    0.65    N/A
+       65536          1024     float    none      -1    47.76    1.37    1.29       0    48.85    1.34    1.26    N/A
+      131072          2048     float    none      -1    51.56    2.54    2.38       0    49.83    2.63    2.47    N/A
+      262144          4096     float    none      -1    69.55    3.77    3.53       0    72.83    3.60    3.37    N/A
+      524288          8192     float    none      -1    77.49    6.77    6.34       0    78.54    6.68    6.26    N/A
+     1048576         16384     float    none      -1    90.41   11.60   10.87       0    88.20   11.89   11.15    N/A
+     2097152         32768     float    none      -1   120.77   17.36   16.28       0   117.78   17.81   16.69    N/A
+     4194304         65536     float    none      -1   173.99   24.11   22.60       0   167.49   25.04   23.48    N/A
+     8388608        131072     float    none      -1   322.21   26.03   24.41       0   309.87   27.07   25.38    N/A
+    16777216        262144     float    none      -1   634.74   26.43   24.78       0   601.25   27.90   26.16    N/A
+    33554432        524288     float    none      -1  1143.66   29.34   27.51       0  1096.94   30.59   28.68    N/A
+    67108864       1048576     float    none      -1  1880.40   35.69   33.46       0  1831.62   36.64   34.35    N/A
+   134217728       2097152     float    none      -1  3218.52   41.70   39.10       0  3221.80   41.66   39.06    N/A
+   268435456       4194304     float    none      -1  6081.70   44.14   41.38       0  6020.65   44.59   41.80    N/A
+   536870912       8388608     float    none      -1  11954.5   44.91   42.10       0  12143.9   44.21   41.45    N/A
+  1073741824      16777216     float    none      -1  23715.9   45.28   42.45       0  23937.5   44.86   42.05    N/A
+  2147483648      33554432     float    none      -1  46944.4   45.75   42.89       0  46955.2   45.73   42.88    N/A
+  4294967296      67108864     float    none      -1  93741.3   45.82   42.95       0  93322.8   46.02   43.15    N/A
+  8589934592     134217728     float    none      -1   186833   45.98   43.10       0   186156   46.14   43.26    N/A
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 19.6425 
+#
+# Collective test concluded: alltoall_perf
+#
+
+
+========================================
+CASE2: AR ON DDP OFF a2a run 3/3
+Started: 2026-04-23T08:35:39+00:00
+========================================
+COMMAND:
+mpirun --allow-run-as-root --hostfile /workspace/hostfile -npernode 8 --bind-to none --map-by slot -mca plm_rsh_args -p\ 3456 --mca pml ucx --mca btl \^openib -mca btl_tcp_if_include bond0 -mca oob_tcp_if_include bond0 -x NCCL_NET_PLUGIN=spcx -x NCCL_DEBUG=WARN -x NCCL_DEBUG_SUBSYS=GRAPH\,NET\,TUNING -x NCCL_SHM_DISABLE=1 -x UCX_TLS=rc -x NCCL_SOCKET_IFNAME=bond0 -x NCCL_IB_HCA=mlx5_2\,mlx5_3\,mlx5_0\,mlx5_1\,mlx5_6\,mlx5_7\,mlx5_4\,mlx5_5 -x NCCL_IB_GID_INDEX=3 -x NCCL_IB_TC=96 -x NCCL_CROSS_NIC=1 -x NCCL_BUFFSIZE=16777216 -x NCCL_IB_QPS_PER_CONNECTION=2 -x NCCL_NCHANNELS_PER_NET_PEER=4 -x NCCL_P2P_NET_CHUNKSIZE=262144 -x NCCL_IB_TIMEOUT=1 -x NCCL_IB_RETRY_CNT=1 -x NCCL_IB_RESILIENCY_PORT_FAILOVER=0 -x NCCL_P2P_DISABLE=1 -x LD_LIBRARY_PATH=/workspace/nccl/build/lib:/workspace/hpcx-v2.26-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64/nccl_spectrum-x_plugin/lib:/workspace/nccl/build/lib -x NCCL_IB_ADAPTIVE_ROUTING=1 -x NCCL_IB_OOO_RQ=0 -x NCCL_IB_RECEIVER_SIDE_MATCHING_SCHEME=0 -x NCCL_IB_PREPOST_RECEIVE_WORK_REQUESTS=0 /workspace/nccl-tests/build/alltoall_perf -b 1k -e 8G -f 2 -g 1
+
+--------------------------------------------------------------------------
+Two mutually-exclusive MCA variables were specified.  This can result
+in undefined behavior, such as ignoring the components that the MCA
+variables are supposed to affect.
+
+  1st MCA variable: btl_tcp_if_include
+    Source of value: environment
+  2nd MCA variable: btl_tcp_if_exclude
+    Source of value: file (/opt/hpcx/ompi/etc/openmpi-mca-params.conf:97)
+--------------------------------------------------------------------------
+# nccl-tests version 2.18.3 nccl-headers=22907 nccl-library=22907
+# Collective test starting: alltoall_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid  96725 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid  96726 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid  96727 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid  96728 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid  96729 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid  96730 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid  96731 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid  96732 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid  98976 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid  98977 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid  98978 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid  98979 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid  98980 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid  98981 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid  98982 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid  98983 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.29.7+cuda13.0
+#
+#                                                              out-of-place                       in-place          
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong 
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)         
+[R6KD-CX8aaS-GPU-11:96720] 15 more processes have sent help message help-mca-var.txt / mutually-exclusive-vars
+[R6KD-CX8aaS-GPU-11:96720] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+        1024            16     float    none      -1    52.86    0.02    0.02       0    46.64    0.02    0.02    N/A
+        2048            32     float    none      -1    46.43    0.04    0.04       0    45.88    0.04    0.04    N/A
+        4096            64     float    none      -1    46.54    0.09    0.08       0    45.97    0.09    0.08    N/A
+        8192           128     float    none      -1    46.82    0.17    0.16       0    46.44    0.18    0.17    N/A
+       16384           256     float    none      -1    46.57    0.35    0.33       0    45.81    0.36    0.34    N/A
+       32768           512     float    none      -1    47.31    0.69    0.65       0    60.09    0.55    0.51    N/A
+       65536          1024     float    none      -1    50.14    1.31    1.23       0    47.60    1.38    1.29    N/A
+      131072          2048     float    none      -1    49.90    2.63    2.46       0    50.38    2.60    2.44    N/A
+      262144          4096     float    none      -1    68.10    3.85    3.61       0    73.20    3.58    3.36    N/A
+      524288          8192     float    none      -1    77.94    6.73    6.31       0    77.07    6.80    6.38    N/A
+     1048576         16384     float    none      -1    90.53   11.58   10.86       0    88.73   11.82   11.08    N/A
+     2097152         32768     float    none      -1   121.49   17.26   16.18       0   118.86   17.64   16.54    N/A
+     4194304         65536     float    none      -1   172.89   24.26   22.74       0   168.16   24.94   23.38    N/A
+     8388608        131072     float    none      -1   325.10   25.80   24.19       0   310.86   26.98   25.30    N/A
+    16777216        262144     float    none      -1   627.68   26.73   25.06       0   605.81   27.69   25.96    N/A
+    33554432        524288     float    none      -1  1139.66   29.44   27.60       0  1093.75   30.68   28.76    N/A
+    67108864       1048576     float    none      -1  1884.74   35.61   33.38       0  1825.46   36.76   34.46    N/A
+   134217728       2097152     float    none      -1  3247.26   41.33   38.75       0  3212.79   41.78   39.17    N/A
+   268435456       4194304     float    none      -1  6027.96   44.53   41.75       0  6053.33   44.35   41.57    N/A
+   536870912       8388608     float    none      -1  11860.7   45.26   42.44       0  12017.5   44.67   41.88    N/A
+  1073741824      16777216     float    none      -1  23665.0   45.37   42.54       0  23903.9   44.92   42.11    N/A
+  2147483648      33554432     float    none      -1  47128.2   45.57   42.72       0  46919.5   45.77   42.91    N/A
+  4294967296      67108864     float    none      -1  93761.2   45.81   42.94       0  93103.0   46.13   43.25    N/A
+  8589934592     134217728     float    none      -1   186880   45.96   43.09       0   185893   46.21   43.32    N/A
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 19.6554 
+#
+# Collective test concluded: alltoall_perf
+#
+
+
+========================================
+CASE3: AR ON DDP ON a2a run 1/3
+Started: 2026-04-23T08:38:24+00:00
+========================================
+COMMAND:
+mpirun --allow-run-as-root --hostfile /workspace/hostfile -npernode 8 --bind-to none --map-by slot -mca plm_rsh_args -p\ 3456 --mca pml ucx --mca btl \^openib -mca btl_tcp_if_include bond0 -mca oob_tcp_if_include bond0 -x NCCL_NET_PLUGIN=spcx -x NCCL_DEBUG=WARN -x NCCL_DEBUG_SUBSYS=GRAPH\,NET\,TUNING -x NCCL_SHM_DISABLE=1 -x UCX_TLS=rc -x NCCL_SOCKET_IFNAME=bond0 -x NCCL_IB_HCA=mlx5_2\,mlx5_3\,mlx5_0\,mlx5_1\,mlx5_6\,mlx5_7\,mlx5_4\,mlx5_5 -x NCCL_IB_GID_INDEX=3 -x NCCL_IB_TC=96 -x NCCL_CROSS_NIC=1 -x NCCL_BUFFSIZE=16777216 -x NCCL_IB_QPS_PER_CONNECTION=2 -x NCCL_NCHANNELS_PER_NET_PEER=4 -x NCCL_P2P_NET_CHUNKSIZE=262144 -x NCCL_IB_TIMEOUT=1 -x NCCL_IB_RETRY_CNT=1 -x NCCL_IB_RESILIENCY_PORT_FAILOVER=0 -x NCCL_P2P_DISABLE=1 -x LD_LIBRARY_PATH=/workspace/nccl/build/lib:/workspace/hpcx-v2.26-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64/nccl_spectrum-x_plugin/lib:/workspace/nccl/build/lib -x NCCL_IB_ADAPTIVE_ROUTING=1 -x NCCL_IB_OOO_RQ=1 -x NCCL_IB_RECEIVER_SIDE_MATCHING_SCHEME=1 -x NCCL_IB_PREPOST_RECEIVE_WORK_REQUESTS=1 /workspace/nccl-tests/build/alltoall_perf -b 1k -e 8G -f 2 -g 1
+
+--------------------------------------------------------------------------
+Two mutually-exclusive MCA variables were specified.  This can result
+in undefined behavior, such as ignoring the components that the MCA
+variables are supposed to affect.
+
+  1st MCA variable: btl_tcp_if_include
+    Source of value: environment
+  2nd MCA variable: btl_tcp_if_exclude
+    Source of value: file (/opt/hpcx/ompi/etc/openmpi-mca-params.conf:97)
+--------------------------------------------------------------------------
+# nccl-tests version 2.18.3 nccl-headers=22907 nccl-library=22907
+# Collective test starting: alltoall_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid  97694 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid  97695 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid  97696 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid  97697 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid  97698 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid  97699 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid  97700 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid  97701 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid 100088 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid 100089 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid 100090 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid 100091 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid 100092 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid 100093 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid 100094 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid 100095 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.29.7+cuda13.0
+#
+#                                                              out-of-place                       in-place          
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong 
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)         
+[R6KD-CX8aaS-GPU-11:97689] 15 more processes have sent help message help-mca-var.txt / mutually-exclusive-vars
+[R6KD-CX8aaS-GPU-11:97689] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+        1024            16     float    none      -1    54.62    0.02    0.02       0    46.90    0.02    0.02    N/A
+        2048            32     float    none      -1    47.42    0.04    0.04       0    46.14    0.04    0.04    N/A
+        4096            64     float    none      -1    46.44    0.09    0.08       0    46.02    0.09    0.08    N/A
+        8192           128     float    none      -1    46.62    0.18    0.16       0    47.88    0.17    0.16    N/A
+       16384           256     float    none      -1    46.82    0.35    0.33       0    46.25    0.35    0.33    N/A
+       32768           512     float    none      -1    48.14    0.68    0.64       0    48.08    0.68    0.64    N/A
+       65536          1024     float    none      -1    47.59    1.38    1.29       0    47.29    1.39    1.30    N/A
+      131072          2048     float    none      -1    49.78    2.63    2.47       0    49.39    2.65    2.49    N/A
+      262144          4096     float    none      -1    67.55    3.88    3.64       0    74.53    3.52    3.30    N/A
+      524288          8192     float    none      -1    79.17    6.62    6.21       0    76.15    6.89    6.45    N/A
+     1048576         16384     float    none      -1    90.50   11.59   10.86       0    89.08   11.77   11.04    N/A
+     2097152         32768     float    none      -1   121.69   17.23   16.16       0   119.77   17.51   16.42    N/A
+     4194304         65536     float    none      -1   172.90   24.26   22.74       0   168.43   24.90   23.35    N/A
+     8388608        131072     float    none      -1   324.13   25.88   24.26       0   310.01   27.06   25.37    N/A
+    16777216        262144     float    none      -1   629.11   26.67   25.00       0   602.74   27.84   26.10    N/A
+    33554432        524288     float    none      -1  1148.20   29.22   27.40       0  1094.58   30.66   28.74    N/A
+    67108864       1048576     float    none      -1  1889.42   35.52   33.30       0  1833.02   36.61   34.32    N/A
+   134217728       2097152     float    none      -1  3220.91   41.67   39.07       0  3225.61   41.61   39.01    N/A
+   268435456       4194304     float    none      -1  6065.44   44.26   41.49       0  6021.74   44.58   41.79    N/A
+   536870912       8388608     float    none      -1  11836.7   45.36   42.52       0  12117.4   44.31   41.54    N/A
+  1073741824      16777216     float    none      -1  23649.6   45.40   42.56       0  23838.5   45.04   42.23    N/A
+  2147483648      33554432     float    none      -1  47282.5   45.42   42.58       0  47147.7   45.55   42.70    N/A
+  4294967296      67108864     float    none      -1  93695.5   45.84   42.97       0  93093.1   46.14   43.25    N/A
+  8589934592     134217728     float    none      -1   186745   46.00   43.12       0   186032   46.17   43.29    N/A
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 19.6431 
+#
+# Collective test concluded: alltoall_perf
+#
+
+
+========================================
+CASE3: AR ON DDP ON a2a run 2/3
+Started: 2026-04-23T08:38:52+00:00
+========================================
+COMMAND:
+mpirun --allow-run-as-root --hostfile /workspace/hostfile -npernode 8 --bind-to none --map-by slot -mca plm_rsh_args -p\ 3456 --mca pml ucx --mca btl \^openib -mca btl_tcp_if_include bond0 -mca oob_tcp_if_include bond0 -x NCCL_NET_PLUGIN=spcx -x NCCL_DEBUG=WARN -x NCCL_DEBUG_SUBSYS=GRAPH\,NET\,TUNING -x NCCL_SHM_DISABLE=1 -x UCX_TLS=rc -x NCCL_SOCKET_IFNAME=bond0 -x NCCL_IB_HCA=mlx5_2\,mlx5_3\,mlx5_0\,mlx5_1\,mlx5_6\,mlx5_7\,mlx5_4\,mlx5_5 -x NCCL_IB_GID_INDEX=3 -x NCCL_IB_TC=96 -x NCCL_CROSS_NIC=1 -x NCCL_BUFFSIZE=16777216 -x NCCL_IB_QPS_PER_CONNECTION=2 -x NCCL_NCHANNELS_PER_NET_PEER=4 -x NCCL_P2P_NET_CHUNKSIZE=262144 -x NCCL_IB_TIMEOUT=1 -x NCCL_IB_RETRY_CNT=1 -x NCCL_IB_RESILIENCY_PORT_FAILOVER=0 -x NCCL_P2P_DISABLE=1 -x LD_LIBRARY_PATH=/workspace/nccl/build/lib:/workspace/hpcx-v2.26-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64/nccl_spectrum-x_plugin/lib:/workspace/nccl/build/lib -x NCCL_IB_ADAPTIVE_ROUTING=1 -x NCCL_IB_OOO_RQ=1 -x NCCL_IB_RECEIVER_SIDE_MATCHING_SCHEME=1 -x NCCL_IB_PREPOST_RECEIVE_WORK_REQUESTS=1 /workspace/nccl-tests/build/alltoall_perf -b 1k -e 8G -f 2 -g 1
+
+--------------------------------------------------------------------------
+Two mutually-exclusive MCA variables were specified.  This can result
+in undefined behavior, such as ignoring the components that the MCA
+variables are supposed to affect.
+
+  1st MCA variable: btl_tcp_if_include
+    Source of value: environment
+  2nd MCA variable: btl_tcp_if_exclude
+    Source of value: file (/opt/hpcx/ompi/etc/openmpi-mca-params.conf:97)
+--------------------------------------------------------------------------
+# nccl-tests version 2.18.3 nccl-headers=22907 nccl-library=22907
+# Collective test starting: alltoall_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid  97935 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid  97936 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid  97937 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid  97938 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid  97939 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid  97940 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid  97941 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid  97942 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid 100366 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid 100367 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid 100368 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid 100369 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid 100370 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid 100371 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid 100372 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid 100373 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.29.7+cuda13.0
+#
+#                                                              out-of-place                       in-place          
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong 
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)         
+[R6KD-CX8aaS-GPU-11:97930] 15 more processes have sent help message help-mca-var.txt / mutually-exclusive-vars
+[R6KD-CX8aaS-GPU-11:97930] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+        1024            16     float    none      -1    50.47    0.02    0.02       0    46.56    0.02    0.02    N/A
+        2048            32     float    none      -1    48.99    0.04    0.04       0    46.85    0.04    0.04    N/A
+        4096            64     float    none      -1    46.59    0.09    0.08       0    46.67    0.09    0.08    N/A
+        8192           128     float    none      -1    46.80    0.18    0.16       0    46.21    0.18    0.17    N/A
+       16384           256     float    none      -1    47.13    0.35    0.33       0    46.97    0.35    0.33    N/A
+       32768           512     float    none      -1    47.62    0.69    0.65       0    46.99    0.70    0.65    N/A
+       65536          1024     float    none      -1    47.72    1.37    1.29       0    49.27    1.33    1.25    N/A
+      131072          2048     float    none      -1    49.85    2.63    2.46       0    50.40    2.60    2.44    N/A
+      262144          4096     float    none      -1    68.49    3.83    3.59       0    70.50    3.72    3.49    N/A
+      524288          8192     float    none      -1    79.70    6.58    6.17       0    77.68    6.75    6.33    N/A
+     1048576         16384     float    none      -1    90.93   11.53   10.81       0    89.58   11.70   10.97    N/A
+     2097152         32768     float    none      -1   122.81   17.08   16.01       0   119.52   17.55   16.45    N/A
+     4194304         65536     float    none      -1   173.78   24.14   22.63       0   167.88   24.98   23.42    N/A
+     8388608        131072     float    none      -1   325.18   25.80   24.18       0   311.58   26.92   25.24    N/A
+    16777216        262144     float    none      -1   631.87   26.55   24.89       0   601.83   27.88   26.13    N/A
+    33554432        524288     float    none      -1  1150.74   29.16   27.34       0  1086.08   30.89   28.96    N/A
+    67108864       1048576     float    none      -1  1888.00   35.55   33.32       0  1831.56   36.64   34.35    N/A
+   134217728       2097152     float    none      -1  3256.25   41.22   38.64       0  3231.40   41.54   38.94    N/A
+   268435456       4194304     float    none      -1  6055.37   44.33   41.56       0  6083.41   44.13   41.37    N/A
+   536870912       8388608     float    none      -1  11880.3   45.19   42.37       0  11930.3   45.00   42.19    N/A
+  1073741824      16777216     float    none      -1  23511.9   45.67   42.81       0  23839.6   45.04   42.23    N/A
+  2147483648      33554432     float    none      -1  47014.5   45.68   42.82       0  47021.8   45.67   42.82    N/A
+  4294967296      67108864     float    none      -1  93825.0   45.78   42.92       0  93491.4   45.94   43.07    N/A
+  8589934592     134217728     float    none      -1   186833   45.98   43.10       0   185832   46.22   43.34    N/A
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 19.6345 
+#
+# Collective test concluded: alltoall_perf
+#
+
+
+========================================
+CASE3: AR ON DDP ON a2a run 3/3
+Started: 2026-04-23T08:39:19+00:00
+========================================
+COMMAND:
+mpirun --allow-run-as-root --hostfile /workspace/hostfile -npernode 8 --bind-to none --map-by slot -mca plm_rsh_args -p\ 3456 --mca pml ucx --mca btl \^openib -mca btl_tcp_if_include bond0 -mca oob_tcp_if_include bond0 -x NCCL_NET_PLUGIN=spcx -x NCCL_DEBUG=WARN -x NCCL_DEBUG_SUBSYS=GRAPH\,NET\,TUNING -x NCCL_SHM_DISABLE=1 -x UCX_TLS=rc -x NCCL_SOCKET_IFNAME=bond0 -x NCCL_IB_HCA=mlx5_2\,mlx5_3\,mlx5_0\,mlx5_1\,mlx5_6\,mlx5_7\,mlx5_4\,mlx5_5 -x NCCL_IB_GID_INDEX=3 -x NCCL_IB_TC=96 -x NCCL_CROSS_NIC=1 -x NCCL_BUFFSIZE=16777216 -x NCCL_IB_QPS_PER_CONNECTION=2 -x NCCL_NCHANNELS_PER_NET_PEER=4 -x NCCL_P2P_NET_CHUNKSIZE=262144 -x NCCL_IB_TIMEOUT=1 -x NCCL_IB_RETRY_CNT=1 -x NCCL_IB_RESILIENCY_PORT_FAILOVER=0 -x NCCL_P2P_DISABLE=1 -x LD_LIBRARY_PATH=/workspace/nccl/build/lib:/workspace/hpcx-v2.26-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64/nccl_spectrum-x_plugin/lib:/workspace/nccl/build/lib -x NCCL_IB_ADAPTIVE_ROUTING=1 -x NCCL_IB_OOO_RQ=1 -x NCCL_IB_RECEIVER_SIDE_MATCHING_SCHEME=1 -x NCCL_IB_PREPOST_RECEIVE_WORK_REQUESTS=1 /workspace/nccl-tests/build/alltoall_perf -b 1k -e 8G -f 2 -g 1
+
+--------------------------------------------------------------------------
+Two mutually-exclusive MCA variables were specified.  This can result
+in undefined behavior, such as ignoring the components that the MCA
+variables are supposed to affect.
+
+  1st MCA variable: btl_tcp_if_include
+    Source of value: environment
+  2nd MCA variable: btl_tcp_if_exclude
+    Source of value: file (/opt/hpcx/ompi/etc/openmpi-mca-params.conf:97)
+--------------------------------------------------------------------------
+# nccl-tests version 2.18.3 nccl-headers=22907 nccl-library=22907
+# Collective test starting: alltoall_perf
+# nThread 1 nGpus 1 minBytes 1024 maxBytes 8589934592 step: 2(factor) warmup iters: 1 iters: 20 agg iters: 1 validation: 1 graph: 0 unalign: 0
+#
+# Using devices
+#  Rank  0 Group  0 Pid  98176 on R6KD-CX8aaS-GPU-11 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  1 Group  0 Pid  98177 on R6KD-CX8aaS-GPU-11 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank  2 Group  0 Pid  98178 on R6KD-CX8aaS-GPU-11 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank  3 Group  0 Pid  98179 on R6KD-CX8aaS-GPU-11 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank  4 Group  0 Pid  98180 on R6KD-CX8aaS-GPU-11 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank  5 Group  0 Pid  98181 on R6KD-CX8aaS-GPU-11 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank  6 Group  0 Pid  98182 on R6KD-CX8aaS-GPU-11 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank  7 Group  0 Pid  98183 on R6KD-CX8aaS-GPU-11 device  7 [0000:f9:00] NVIDIA RTX 6000D
+#  Rank  8 Group  0 Pid 100644 on R6KD-CX8aaS-GPU-12 device  0 [0000:06:00] NVIDIA RTX 6000D
+#  Rank  9 Group  0 Pid 100645 on R6KD-CX8aaS-GPU-12 device  1 [0000:09:00] NVIDIA RTX 6000D
+#  Rank 10 Group  0 Pid 100646 on R6KD-CX8aaS-GPU-12 device  2 [0000:76:00] NVIDIA RTX 6000D
+#  Rank 11 Group  0 Pid 100647 on R6KD-CX8aaS-GPU-12 device  3 [0000:79:00] NVIDIA RTX 6000D
+#  Rank 12 Group  0 Pid 100648 on R6KD-CX8aaS-GPU-12 device  4 [0000:86:00] NVIDIA RTX 6000D
+#  Rank 13 Group  0 Pid 100649 on R6KD-CX8aaS-GPU-12 device  5 [0000:89:00] NVIDIA RTX 6000D
+#  Rank 14 Group  0 Pid 100650 on R6KD-CX8aaS-GPU-12 device  6 [0000:f6:00] NVIDIA RTX 6000D
+#  Rank 15 Group  0 Pid 100651 on R6KD-CX8aaS-GPU-12 device  7 [0000:f9:00] NVIDIA RTX 6000D
+NCCL version 2.29.7+cuda13.0
+#
+#                                                              out-of-place                       in-place          
+#       size         count      type   redop    root     time   algbw   busbw  #wrong     time   algbw   busbw  #wrong 
+#        (B)    (elements)                               (us)  (GB/s)  (GB/s)             (us)  (GB/s)  (GB/s)         
+[R6KD-CX8aaS-GPU-11:98171] 15 more processes have sent help message help-mca-var.txt / mutually-exclusive-vars
+[R6KD-CX8aaS-GPU-11:98171] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+        1024            16     float    none      -1    59.39    0.02    0.02       0    47.53    0.02    0.02    N/A
+        2048            32     float    none      -1    47.77    0.04    0.04       0    46.54    0.04    0.04    N/A
+        4096            64     float    none      -1    46.92    0.09    0.08       0    46.82    0.09    0.08    N/A
+        8192           128     float    none      -1    46.68    0.18    0.16       0    46.65    0.18    0.16    N/A
+       16384           256     float    none      -1    47.30    0.35    0.32       0    47.05    0.35    0.33    N/A
+       32768           512     float    none      -1    48.61    0.67    0.63       0    47.51    0.69    0.65    N/A
+       65536          1024     float    none      -1    48.48    1.35    1.27       0    49.06    1.34    1.25    N/A
+      131072          2048     float    none      -1    50.88    2.58    2.42       0    49.84    2.63    2.47    N/A
+      262144          4096     float    none      -1    68.20    3.84    3.60       0    75.61    3.47    3.25    N/A
+      524288          8192     float    none      -1    80.33    6.53    6.12       0    78.24    6.70    6.28    N/A
+     1048576         16384     float    none      -1    91.31   11.48   10.77       0    88.40   11.86   11.12    N/A
+     2097152         32768     float    none      -1   122.21   17.16   16.09       0   119.81   17.50   16.41    N/A
+     4194304         65536     float    none      -1   174.68   24.01   22.51       0   170.03   24.67   23.13    N/A
+     8388608        131072     float    none      -1   323.24   25.95   24.33       0   309.30   27.12   25.43    N/A
+    16777216        262144     float    none      -1   632.68   26.52   24.86       0   602.34   27.85   26.11    N/A
+    33554432        524288     float    none      -1  1145.70   29.29   27.46       0  1087.51   30.85   28.93    N/A
+    67108864       1048576     float    none      -1  1872.89   35.83   33.59       0  1828.13   36.71   34.41    N/A
+   134217728       2097152     float    none      -1  3252.20   41.27   38.69       0  3241.61   41.40   38.82    N/A
+   268435456       4194304     float    none      -1  6125.13   43.83   41.09       0  6110.60   43.93   41.18    N/A
+   536870912       8388608     float    none      -1  11953.4   44.91   42.11       0  12223.1   43.92   41.18    N/A
+  1073741824      16777216     float    none      -1  23646.3   45.41   42.57       0  23854.3   45.01   42.20    N/A
+  2147483648      33554432     float    none      -1  47131.5   45.56   42.72       0  47129.2   45.57   42.72    N/A
+  4294967296      67108864     float    none      -1  93738.5   45.82   42.95       0  93323.3   46.02   43.15    N/A
+  8589934592     134217728     float    none      -1   186825   45.98   43.10       0   185941   46.20   43.31    N/A
+# Out of bounds values : 0 OK
+# Avg bus bandwidth    : 19.5857 
+#
+# Collective test concluded: alltoall_perf
+#
+
+
